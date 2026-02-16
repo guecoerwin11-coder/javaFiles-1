@@ -1,22 +1,27 @@
-function bankAccount(initialBalance){
-    let balance = initialBalance
+function limit(fn, n) {
+  let count = 0;
+  let lastResult;
 
-    return{
-        deposit(amount){
-            balance += amount
-            return `you deposited ${amount} and your new balance is ${balance}`;
-        },
-        getBal(){
-            return balance;
-        },
-        withdraw(amount){
-            balance -= amount;
-            return `you withdraw ${amount}, and your balance now is ${balance}`;
-        }
+  return function(...args) {
+    if (count < n) {
+      lastResult = fn.apply(this, args);
+      count++;
     }
+    return lastResult;
+  };
 }
 
-const myBalance = bankAccount(1000);
-console.log(myBalance.withdraw(350))
-console.log(myBalance.deposit(450))
-console.log(myBalance.getBal())
+
+
+
+function greet(name) {
+  console.log("Hello " + name);
+  return name;
+}
+
+const limited = limit(greet, 2);
+
+limited("Erwin"); // Hello Erwin
+limited("Ana");   // Hello Ana
+limited("John");  // ❌ hindi na tatakbo
+limited("Mike");  // ❌ hindi na tatakbo
