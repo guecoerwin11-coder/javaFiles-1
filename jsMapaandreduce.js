@@ -1,24 +1,26 @@
-//map and reduce
-
-const listItems = [
-    {id: 1, user: "Erwin", items:"Books", price: 2000},
-    {id: 2, user: "Rona", items:"Tv", price: 1500},
-    {id: 3, user: "Apey", items:"Ballpen", price: 250},
-    {id: 4, user: "Erwin", items:"Laptop", price: 3400},
-]
-
-let getUser = listItems.map(u => `the clients is ${u.user}`)
-console.log(getUser)
-
-let getItems = listItems.reduce((acc, { id, user, items, price }) => {
-    if(!acc[user]){
-        acc[user] = {
-            total: 0,
-            item: []
+function memoize(fn){
+    let num = 0
+    let getAdd;
+    let tryAgain = false
+    return function(...args){
+        if(num < 2){
+            getAdd = fn.apply(this, args)
+            num++
+            tryAgain = true
         }
+        return getAdd;
     }
-    acc[user].total += price;
-    acc[user].item.push(items)
-    return acc;
-}, {})
-console.log(getItems)
+}
+
+
+const slowAdd = (a, b) => {
+  console.log("Calculating...");
+  return a + b;
+};
+
+const memoized = memoize(slowAdd);
+
+memoized(2, 3); // Calculating... → 5
+memoized(2, 3); // 5 (no "Calculating...")
+memoized(3, 4); // Calculating... → 7
+memoized(2, 3); // 5
